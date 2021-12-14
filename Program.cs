@@ -27,41 +27,42 @@ namespace RailWay
 
             return userIntput;                                                              // returns the int that the user inputed
         }
+
+        static Dictionary<int, string> RailFence(string plainText, int tracks){
+            int track = 1;
+            Dictionary<int, string> cipher = new Dictionary<int, string>();
+            for (int index = 0; index < plainText.Length; index++)
+            {
+                char currentchar = plainText[index];
+                if(currentchar != ' '){
+                    if(cipher.ContainsKey(track) == true){
+                        string old = cipher[track].ToString();
+                        cipher[track] = (old + currentchar).ToString();
+                    }
+                    else
+                        cipher[track] = currentchar.ToString();
+                    
+                    track = (track % tracks) + 1;
+                }
+            }
+            return cipher;
+        }
         static void Main(string[] args)
         {
             Console.Write("plaintext: ");
             string plainText = Console.ReadLine();
 
             int numberOfTacks = GetIntInput("railfence: ", 2, plainText.Length);
-            Dictionary<int, string> movingCharacters = new Dictionary<int, string>();
-            string cipher = "";
-            int spaces = 0;
-            int track = 1;
-
-            for (int index = 0; index < plainText.Length; index++)
-            {
-                char currentchar = plainText[index];
-                bool toMove = false;
-                if(currentchar != ' '){
-                    if((index - spaces) % numberOfTacks != 0){
-                        if(movingCharacters.ContainsKey(track) == true){
-                            string old = movingCharacters[track].ToString();
-                            movingCharacters[track] = (old + currentchar).ToString();
-                        }
-                        else
-                            movingCharacters[track] = currentchar.ToString();
-                        track = (track % numberOfTacks) + 1;
-                    }
-                    else{
-                        cipher += currentchar;
-                        track = (track % numberOfTacks) + 1;
-                    }
-                }else
-                    spaces++;
+            Dictionary<int, string> cipher = RailFence(plainText, numberOfTacks);
+          
+            Console.WriteLine("\nRails:");
+            for(int i = 1; i <= numberOfTacks; i++){
+                Console.Write(cipher[i]);
+                Console.WriteLine("");
             }
-            for(int i = 2; i <= numberOfTacks; i++)
-                cipher += movingCharacters[i];
-            Console.WriteLine($"Cipher: {cipher}");
+            Console.WriteLine("\nWhole cipher text:");
+            for (int i = 1; i <= numberOfTacks; i++)
+                Console.Write(cipher[i]);
         }
     }
 }
